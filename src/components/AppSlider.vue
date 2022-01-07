@@ -1,34 +1,29 @@
 <template>
-  <div>
-    <transition name="slider">
-      <div class="slider" v-show="show">ddd</div>
-    </transition>
-    <el-button>button</el-button>
+  <div class="app-slider">
+    <slot></slot>
   </div>
 </template>
+
 <script>
 export default {
-  data: function () {
-    return {
-      show: true,
-    };
-  },
+  name: "AppSlider"
 };
 </script>
 
 <style scoped>
-.slider {
-  width: 200px;
-  background-color: aqua;
+* {
+  padding: 0;
+  margin: 0;
 }
 
-.slider-enter-active {
-  width: 200px;
-  transition: all 0.3s;
+
+.app-slider {
+  text-align: center;
+  height: 100%;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  z-index: 100;
 }
 
-.slider-leave-active {
-  width: 0px;
-  transition: all 0.3s;
-}
 </style>

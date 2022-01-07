@@ -9,7 +9,9 @@
       :key="item.id"
     >
       <el-col :span="10" :pull="1">
-        <div class="grid-content bg-purple"><img v-bind:src="item.image" alt=""></div>
+        <div class="grid-content bg-purple">
+          <img v-bind:src="item.image" alt="" />
+        </div>
       </el-col>
       <el-col :span="10" :push="1">
         <div class="grid-content bg-purple-light">{{ item.title }}</div>
@@ -27,18 +29,22 @@ export default {
       items: [],
     };
   },
-  methods: {},
   mounted: function () {
     Vue.axios
       .post("https://api.apiopen.top/getWangYiNews", {})
       .then((response) => {
-        console.log(response)
+        console.log(response);
         this.items = response.data.result;
-        console.log(this.items)
+        console.log(this.items);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
+  },
+  methods: {
+    jumpPage: function (pageId) {
+      this.$router.push({ name: "Content", params: { pageId: pageId } });
+    },
   },
 };
 </script>
@@ -68,6 +74,6 @@ export default {
   background-color: #f9fafc;
 }
 img {
-  width: 166px;;
+  width: 166px;
 }
 </style>
