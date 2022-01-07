@@ -8,7 +8,7 @@
       :key="item.id"
     >
       <el-col :span="6">
-        <div class="grid-content bg-purple">{{ item.id }}</div>
+        <div class="grid-content bg-purple" @click="jumpPage(item.id)">{{ item.id }}</div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content bg-purple-light">{{ item.msg }}</div>
@@ -41,7 +41,11 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+    jumpPage: function(pageId){
+      this.$router.push({name: "Content", params: {pageId}})
+    }
+  },
 };
 </script>
 
