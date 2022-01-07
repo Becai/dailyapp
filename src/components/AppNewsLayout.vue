@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     jumpPage: function(pageId){
-      this.$router.push({name: "Content", params: {pageId}})
+      this.$router.push({name: "Content", params: {pageId: pageId}})
     }
   },
 };
