@@ -15,11 +15,11 @@
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
-          <img v-bind:src="item.image" alt="" v-on:click="jumpPage" v-else/>
+          <img v-bind:src="item.image" alt="" v-on:click="jumpPage(item.id)" v-else/>
         </div>
       </el-col>
       <el-col :span="10" :push="1">
-        <div class="grid-content" v-on:click="jumpPage">
+        <div class="grid-content" v-on:click="jumpPage(item.id)">
           {{ item.title }}
         </div>
         <div class="newsdate">{{ item.date }}</div>
@@ -71,9 +71,10 @@ export default {
   },
   methods: {
     // 新闻详情跳转
-    jumpPage: function (pageId) {
-      alert();
-      this.$router.push({ name: "Content", params: { pageId: pageId } });
+    jumpPage: function (id) {
+      let pageId;
+      console.log(id);
+      this.$router.push({ name: "Content", params: { pageId: pageId, id: id} });
     },
   },
 };

@@ -6,12 +6,8 @@
           <i class="el-icon-close" @click="toggleSlider"></i>
         </div>
         <el-row>
-          <div>
-            侧边栏内容1
-          </div>
-          <div>
-            侧边栏内容2
-          </div>
+          <div>侧边栏内容1</div>
+          <div>侧边栏内容2</div>
         </el-row>
       </AppSlider>
     </transition>
@@ -22,7 +18,7 @@
           <el-row>
             <!-- 控制侧边栏的按键 -->
             <el-col :span="2" class="slider-toggle-button">
-                <i class="el-icon-s-operation" @click="toggleSlider"></i>
+              <i class="el-icon-s-operation" @click="toggleSlider"></i>
             </el-col>
             <!-- 搜索栏 -->
             <el-col :span="22">
@@ -32,7 +28,7 @@
         </el-header>
         <el-main>
           <el-container>
-            <el-header height="200px" style="margin-bottom:20px">
+            <el-header height="200px" style="margin-bottom: 20px">
               <carousel />
             </el-header>
             <el-main>
@@ -46,13 +42,13 @@
 </template>
 
 <script>
-import search from "../components/AppSearch.vue";
-import carousel from "../components/AppCarousel.vue";
-import newslayout from "../components/AppNewsLayout.vue";
-import AppSlider from "../components/AppSlider.vue";
+import search from '../components/AppSearch.vue'
+import carousel from '../components/AppCarousel.vue'
+import newslayout from '../components/AppNewsLayout.vue'
+import AppSlider from '../components/AppSlider.vue'
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     search,
     carousel,
@@ -61,16 +57,16 @@ export default {
   },
   data() {
     return {
-      input: "",
+      input: '',
       show: false,
-    };
+    }
   },
   methods: {
     toggleSlider: function () {
-      this.show = !this.show;
+      this.show = !this.show
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -115,14 +111,14 @@ export default {
   background-color: #fff;
 }
 
-.app-slider-close{
+.app-slider-close {
   text-align: end;
 }
-.el-icon-close{
-  margin-top: .3em;
-  margin-right: .5em;
+.el-icon-close {
+  margin-top: 0.3em;
+  margin-right: 0.5em;
 }
-.slider-toggle-button{
+.slider-toggle-button {
   font-size: 18px;
   text-align: center;
   margin-top: 10px;
