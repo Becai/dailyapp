@@ -125,5 +125,6 @@ export default {
 .slider-toggle-button{
   font-size: 18px;
   text-align: center;
+  margin-top: 10px;
 }
 </style>

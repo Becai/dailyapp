@@ -1,0 +1,20 @@
+@font-face {
+    font-family: zcool;
+    src: url('./ZCOOLXiaoWei-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: notoserif;
+    src: url('./NotoSerifSC-SemiBold.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: notoserifb;
+    src: url('./NotoSerifSC-Bold.otf');
+    font-weight: normal;
+    font-style: normal;
+}

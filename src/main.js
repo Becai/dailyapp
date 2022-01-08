@@ -5,6 +5,8 @@ import './plugins/element.js'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+import './assets/font/font.css'
+
 Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
