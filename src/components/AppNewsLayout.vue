@@ -6,7 +6,7 @@
       justify="center"
       align="middle"
       v-for="item in items"
-      :key="item.id"
+      :key="item.uniqueKey"
     >
       <el-col :span="10" :pull="1">
         <div class="grid-content">
@@ -25,49 +25,95 @@
         <div class="newsdate">{{ item.date }}</div>
       </el-col>
     </el-row>
+    <div v-if="more" class="loading" v-loading="loading"></div>
+    <div v-else class="end_toast">已经到底了！</div>
   </div>
 </template>
 
 <script>
+import { isLoad } from "../utils/scrollUtils.js";
+
+//最小加载时间，单位毫秒
+let minLoadTime = 200;
+//可以加载的最大页数
+let maxPage = 50;
+//当前页数
+let page = 1;
+// let cache = [];
+/**
+ * 加载数据
+ */
+function loadData(vm) {
+  let start = Date.now();
+  let temp = [];
+
+  vm.loading = true;
+  vm.request(
+    "/index",
+    {
+      type: vm.type,
+      page: page,
+      is_filter: 1,
+    },
+    //success
+    (response) => {
+      vm.state = false;
+      console.log(response.data);
+      let resultData = response.data.result.data;
+      // 新闻列表
+      for (let i = 4; i < resultData.length; i++) {
+        let obj = resultData[i];
+        temp.push({
+          author: obj.author_name,
+          category: obj.category,
+          date: obj.date,
+          image: obj.thumbnail_pic_s,
+          title: obj.title,
+          uniqueKey: obj.uniquekey,
+          url: obj.url,
+        });
+      }
+    },
+    //catch
+    undefined,
+    //finally
+    () => {
+      let end = Date.now();
+      //实际加载时间
+      let loadTime = end - start;
+      //第一次加载时不等待
+      let waitTime = 0;
+      if (page != 1) {
+        //设置最小等待加载时间，让用户觉得程序有加载的过程
+        waitTime = loadTime < minLoadTime ? minLoadTime : loadTime;
+      }
+
+      setTimeout(() => {
+        vm.items = vm.items.concat(temp);
+        vm.loading = false;
+        if (page >= maxPage) {
+          vm.more = false;
+        }
+      }, waitTime);
+    }
+  );
+}
+
 export default {
   data: function () {
     return {
       items: [],
       state: true,
-      page: 1,
       type: "top",
+      loading: false,
+      more: true,
     };
   },
   created: function () {
-    let vm = this;
-    this.request(
-      "/index",
-      {
-        type: this.type,
-        page: this.page,
-        is_filter: 1,
-      },
-      function (response) {
-        vm.state = false;
-        console.log(response.data);
-        let resultData = response.data.result.data;
-        let temp = [];
-        // 新闻列表
-        for (let i = 4; i < resultData.length; i++) {
-          let obj = resultData[i];
-          temp.push({
-            author: obj.author_name,
-            category: obj.category,
-            date: obj.date,
-            image: obj.thumbnail_pic_s,
-            title: obj.title,
-            id: obj.uniquekey,
-            url: obj.url,
-          });
-        }
-        vm.items = temp;
-      }
-    );
+    loadData(this);
+  },
+  mounted: function () {
+    window.onscroll = this.loadMore;
   },
   methods: {
     // 新闻详情跳转
@@ -75,6 +121,13 @@ export default {
       let pageId;
       console.log(id);
       this.$router.push({ name: "Content", params: { pageId: pageId, id: id} });
+    },
+    loadMore: function () {
+      if (this.more && !this.loading && isLoad()) {
+        console.log("load");
+        page++;
+        loadData(this);
+      }
     },
   },
 };
@@ -107,5 +160,16 @@ export default {
 }
 img {
   width: 166px;
+}
+
+.loading {
+  padding: 1em 0;
+  text-align: center;
+}
+.end_toast {
+  margin-bottom: 0.2em;
+  margin-top: -1em;
+  color: gray;
+  font-size: 14px;
 }
 </style>

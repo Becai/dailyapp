@@ -1,31 +1,29 @@
 <template>
-  <transition :name="transitionName">
-    <div class="content">
-      <el-container>
-        <el-header height="200px" style="padding: 0">
-          <div class="shadow">
-            <i
-              class="iconfont"
-              style="position: absolute; left: 20px; top: 20px"
-              v-on:click="toback"
-              >&#xe64e;</i
-            >
+  <div class="content">
+    <el-container>
+      <el-header height="200px" style="padding: 0">
+        <div class="shadow">
+          <i
+            class="iconfont"
+            style="position: absolute; left: 20px; top: 20px"
+            v-on:click="toback"
+            >&#xe64e;</i
+          >
+        </div>
+        <img src="" alt="" />
+      </el-header>
+      <el-main style="margin-top: -45px; z-index: 1">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>卡片名称</span>
           </div>
-          <img src="" alt="" />
-        </el-header>
-        <el-main style="margin-top: -45px; z-index: 1">
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span>卡片名称</span>
-            </div>
-            <div v-for="o in 4" :key="o" class="text item">
-              {{ '列表内容 ' + o }}
-            </div>
-          </el-card>
-        </el-main>
-      </el-container>
-    </div>
-  </transition>
+          <div v-for="o in 4" :key="o" class="text item">
+            {{ '列表内容 ' + o }}
+          </div>
+        </el-card>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <script>
@@ -33,7 +31,6 @@ export default {
   name: 'Content',
   data: function () {
     return {
-      transitionName: '',
       pageId: 0,
       id: 0,
       msg: {},

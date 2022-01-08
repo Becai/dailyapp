@@ -1,17 +1,25 @@
 <template>
   <div id="app">
-    <router-view />
+    <transition :name="transitionName">
+      <router-view />
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
   name: 'app',
+  data: function () {
+    return {
+      transitionName: '',
+    }
+  },
   watch: {
     $route(to, from) {
       const toDepth = to.path.split('/').length
       const fromDepth = from.path.split('/').length
       this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      console.log(this.transitionName)
     },
   },
 }
@@ -27,36 +35,28 @@ export default {
   margin: 0;
 }
 
-@keyframes slide-left {
-  0% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  50% {
-    opacity: 0.4;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+  will-change: transform;
+  transition: all 500ms;
+  position: absolute;
 }
-
-@keyframes slide-right {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
+.slide-right-enter {
+  opacity: 0;
+  transform: translateX(-100%);
 }
-
-.slider-left-enter-active {
-  animation: slide-enter 0.3s both;
+.slide-right-leave-active {
+  opacity: 0;
+  transform: translateX(100%);
 }
-
-.slider-right-leave-active {
-  animation: slide-leave 0.3s both;
+.slide-left-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.slide-left-leave-active {
+  opacity: 0;
+  transform: translateX(-100%);
 }
 </style>
