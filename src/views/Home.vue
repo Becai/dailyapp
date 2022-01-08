@@ -32,7 +32,7 @@
         </el-header>
         <el-main>
           <el-container>
-            <el-header height="150px">
+            <el-header height="200px" style="margin-bottom:20px">
               <carousel />
             </el-header>
             <el-main>

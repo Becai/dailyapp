@@ -15,70 +15,65 @@
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
-          <img v-bind:src="item.image" alt="" v-on:click="jumpPage" />
+          <img v-bind:src="item.image" alt="" v-on:click="jumpPage" v-else/>
         </div>
       </el-col>
       <el-col :span="10" :push="1">
         <div class="grid-content" v-on:click="jumpPage">
           {{ item.title }}
         </div>
-        <div class="newsdate">{{ item.passtime }}</div>
+        <div class="newsdate">{{ item.date }}</div>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-
 export default {
-  data() {
+  data: function () {
     return {
       items: [],
-      buffers: [],
       state: true,
+      page: 1,
+      type: "top",
     };
   },
-  mounted: function () {
-    Vue.axios
-      .post("https://api.apiopen.top/getWangYiNews", {})
-      .then((response) => {
-        this.state = false;
-        console.log(response);
-        this.buffers = response.data.result;
-        for (let i = 0; i < 5; i++) {
-          this.items.push(this.buffers.shift());
+  created: function () {
+    let vm = this;
+    this.request(
+      "/index",
+      {
+        type: this.type,
+        page: this.page,
+        is_filter: 1,
+      },
+      function (response) {
+        vm.state = false;
+        console.log(response.data);
+        let resultData = response.data.result.data;
+        let temp = [];
+        // 新闻列表
+        for (let i = 4; i < resultData.length; i++) {
+          let obj = resultData[i];
+          temp.push({
+            author: obj.author_name,
+            category: obj.category,
+            date: obj.date,
+            image: obj.thumbnail_pic_s,
+            title: obj.title,
+            id: obj.uniquekey,
+            url: obj.url,
+          });
         }
-        console.log(this.items);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    this.$nextTick(function () {
-      this.scroll();
-    });
+        vm.items = temp;
+      }
+    );
   },
   methods: {
+    // 新闻详情跳转
     jumpPage: function (pageId) {
       alert();
       this.$router.push({ name: "Content", params: { pageId: pageId } });
-    },
-    scroll: function () {
-      let isLoading = false;
-      window.onscroll = () => {
-        // 距离底部50px时加载一次
-        let bottomOfWindow =
-          document.documentElement.offsetHeight -
-            document.documentElement.scrollTop -
-            window.innerHeight <= 50;
-        if (bottomOfWindow && isLoading == false) {
-          isLoading = true;
-          for (let i = 0; i < 2; i++) {
-            this.items.push(this.buffers.shift());
-          }
-        }
-      };
     },
   },
 };
