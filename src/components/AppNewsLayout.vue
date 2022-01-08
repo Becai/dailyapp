@@ -21,25 +21,42 @@
 </template>
 
 <script>
-import Vue from "vue";
-
 export default {
-  data() {
+  data: function () {
     return {
       items: [],
+      page: 1,
+      type: "top",
     };
   },
-  mounted: function () {
-    Vue.axios
-      .post("https://api.apiopen.top/getWangYiNews", {})
-      .then((response) => {
-        console.log(response);
-        this.items = response.data.result;
-        console.log(this.items);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  created: function () {
+    let vm = this;
+    this.request(
+      "/index",
+      {
+        type: this.type,
+        page: this.page,
+        is_filter: 1,
+      },
+      function (response) {
+        console.log(response.data);
+        let resultData = response.data.result.data;
+        let temp = [];
+        for (let i = 0; i < resultData.length; i++) {
+          let obj = resultData[i];
+          temp.push({
+            author: obj.author_name,
+            category: obj.category,
+            date: obj.date,
+            image: obj.thumbnail_pic_s,
+            title: obj.title,
+            id: obj.uniquekey,
+            url: obj.url,
+          });
+        }
+        vm.items = temp;
+      }
+    );
   },
   methods: {
     jumpPage: function (pageId) {
