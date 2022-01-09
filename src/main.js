@@ -8,6 +8,9 @@ import './assets/iconfont/iconfont.css'
 
 import AxiosUtils from './utils/axiosUtils.js';
 
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
 Vue.config.productionTip = false
 
 // 将request方法挂载到Vue上

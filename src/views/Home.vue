@@ -2,14 +2,17 @@
   <div>
     <transition name="slider">
       <AppSlider v-show="show">
-        <div class="app-slider-close">
+        <div class="app-slider-close close-btn">
           <i class="el-icon-close" @click="toggleSlider"></i>
         </div>
         <el-row>
-          <div v-for="item in tableData" :key="item.id" class="slider-cell">
+          <div v-for="item in tableData" :key="item.id" class="slider-cell" @click="sendType(item.label)">
             {{ item.name }}
           </div>
         </el-row>
+        <div>
+          <el-button type="primary" icon="el-icon-message" class="feedback-btn" v-on:click="feedback">反馈</el-button>
+        </div>
       </AppSlider>
     </transition>
 
@@ -27,16 +30,17 @@
             </el-col>
           </el-row>
         </el-header>
-        <el-main>
+        <el-main v-if="ok">
           <el-container>
             <el-header height="200px" style="margin-bottom: 20px">
               <carousel />
             </el-header>
             <el-main>
-              <newslayout />
+              <newslayout v-bind:category="category" @state="loadErr"/>
             </el-main>
           </el-container>
         </el-main>
+        <el-empty description="网络连接失败" v-else></el-empty>
       </el-container>
     </el-container>
   </div>
@@ -60,18 +64,48 @@ export default {
     return {
       input: '',
       show: false,
+      category: 'top',
+      ok: true,
       tableData: [
         {
-          name: '娱乐',
-          label: 'yule',
+          name: '国内',
+          label: 'guonei',
+        },
+        {
+          name: '国际',
+          label: 'guoji',
         },
         {
           name: '娱乐',
           label: 'yule',
         },
         {
-          name: '娱乐',
-          label: 'yule',
+          name: '体育',
+          label: 'tiyu',
+        },
+        {
+          name: '军事',
+          label: 'junshi',
+        },
+        {
+          name: '科技',
+          label: 'keji',
+        },
+        {
+          name: '财经',
+          label: 'caijing',
+        },
+        {
+          name: '游戏',
+          label: 'youxi',
+        },
+        {
+          name: '汽车',
+          label: 'qiche',
+        },
+        {
+          name: '健康',
+          label: 'jiankang',
         },
       ],
     }
@@ -80,6 +114,17 @@ export default {
     toggleSlider: function () {
       this.show = !this.show
     },
+    feedback: function () {
+      window.location.href = 'https://github.com/Becai/dailyapp'
+      // return 'https://github.com/Becai/dailyapp'
+    },
+    sendType: function(type) {
+      this.category = type
+      console.log(this.category)
+    },
+    loadErr: function(data) {
+      this.ok = data
+    }
   },
 }
 </script>
@@ -150,5 +195,11 @@ export default {
 .slider-cell:first-of-type {
   border-top: thin solid #cfccc9;
   margin-top: 50px;
+}
+.feedback-btn {
+  margin-top: 100px;
+}
+.close-btn {
+  font-size: 18px;
 }
 </style>

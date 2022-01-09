@@ -101,7 +101,10 @@ function loadData(vm) {
       Bus.$emit('msgToCarousel', carouselData)
     },
     //catch
-    undefined,
+    () => {
+      let state = false
+      vm.$emit('state', state)
+    },
     //finally
     () => {
       let end = Date.now()
@@ -126,6 +129,13 @@ function loadData(vm) {
 }
 
 export default {
+  // props: ['temp'],
+  props: {
+    category: {
+      type: String,
+      default: 'top',
+    },
+  },
   data: function () {
     return {
       items: [],
@@ -139,6 +149,7 @@ export default {
     loadData(this)
   },
   mounted: function () {
+    // console.log(this.category)
     window.onscroll = this.loadMore
   },
   methods: {
@@ -154,6 +165,19 @@ export default {
         page++
         loadData(this)
       }
+    },
+  },
+  watch: {
+    // 监听新闻类别category变化
+    category: {
+      handler(type) {
+        // 初始化页面
+        this.items = []
+        this.page = 1
+
+        this.type = type
+        loadData(this)
+      },
     },
   },
 }

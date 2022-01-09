@@ -21,6 +21,9 @@
             <p class="content-date">{{ detail.date }}</p>
             <p v-html="msg.content"></p>
           </div>
+          <div class="share-btn">
+            <i class="el-icon-share" @click="shareNews"></i>
+          </div>
         </el-card>
       </el-main>
     </el-container>
@@ -77,6 +80,28 @@ export default {
     toback: function () {
       this.$router.push({ name: 'Home', params: {} })
     },
+    openSuc() {
+      this.$message({
+        message: '链接已成功复制到剪贴板',
+        type: 'success',
+      })
+    },
+    openErr() {
+      this.$message.error('链接复制失败')
+    },
+    // 复制动作使用的是VUE响应函数方式$copyText，这就为复制前控制数据提供了可能
+    shareNews: function () {
+      this.$copyText(`${this.detail.url}`).then(
+        (res) => {
+          console.log(res)
+          this.openSuc()
+        },
+        (err) => {
+          console.log(err)
+          this.openErr()
+        }
+      )
+    },
   },
 }
 </script>
@@ -127,5 +152,10 @@ i .iconfont {
 .content-title {
   font-family: notoserifb;
   font-size: 24px;
+}
+.share-btn {
+  float: right;
+  margin-bottom: 15px;
+  font-size: 25px;
 }
 </style>
