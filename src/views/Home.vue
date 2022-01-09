@@ -6,16 +6,31 @@
           <i class="el-icon-close" @click="toggleSlider"></i>
         </div>
         <el-row>
-          <div v-for="item in tableData" :key="item.id" class="slider-cell" @click="sendType(item.label)">
+          <div
+            v-for="item in tableData"
+            :key="item.id"
+            class="slider-cell"
+            @click="sendType(item.label)"
+          >
             {{ item.name }}
           </div>
         </el-row>
         <div>
-          <el-button type="primary" icon="el-icon-message" class="feedback-btn" v-on:click="feedback">反馈</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-message"
+            class="feedback-btn"
+            v-on:click="feedback"
+            >反馈</el-button
+          >
         </div>
       </AppSlider>
     </transition>
-
+    <div class="fresh_icon" ref="freshIcon">
+      <svg viewBox="25 25 50 50" class="circular">
+        <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+      </svg>
+    </div>
     <el-container>
       <el-container>
         <el-header>
@@ -36,7 +51,7 @@
               <carousel />
             </el-header>
             <el-main>
-              <newslayout v-bind:category="category" @state="loadErr"/>
+              <newslayout v-bind:category="category" @state="loadErr" />
             </el-main>
           </el-container>
         </el-main>
@@ -52,6 +67,44 @@ import carousel from '../components/AppCarousel.vue'
 import newslayout from '../components/AppNewsLayout.vue'
 import AppSlider from '../components/AppSlider.vue'
 
+function fresh(icon) {
+  //触发刷新的最小移动距离
+  let minFreshDistance = 80
+  //屏幕高度
+  let windowHeight = document.documentElement.clientHeight
+  let startY = 0
+  let allowFresh = false
+  //手指的移动距离
+  let distance = 0
+  document.ontouchstart = (event) => {
+    allowFresh = false
+    startY = event.touches[0].pageY
+    if (startY <= windowHeight / 2) {
+      allowFresh = true
+    }
+  }
+
+  document.ontouchmove = (event) => {
+    if (allowFresh) {
+      let endY = event.touches[0].pageY
+      distance = endY - startY
+      if (distance > 0 && distance <= 300) {
+        let position = distance * 0.6 - 60
+        icon.style.top = position + 'px'
+        console.log(icon.style)
+      }
+    }
+  }
+
+  document.ontouchend = () => {
+    if (allowFresh && distance >= minFreshDistance) {
+      location.reload()
+    } else {
+      icon.style.top = '-100px'
+    }
+  }
+}
+
 export default {
   name: 'Home',
   components: {
@@ -64,6 +117,7 @@ export default {
     return {
       input: '',
       show: false,
+
       category: 'top',
       ok: true,
       tableData: [
@@ -110,6 +164,9 @@ export default {
       ],
     }
   },
+  mounted: function () {
+    fresh(this.$refs.freshIcon)
+  },
   methods: {
     toggleSlider: function () {
       this.show = !this.show
@@ -118,13 +175,13 @@ export default {
       window.location.href = 'https://github.com/Becai/dailyapp'
       // return 'https://github.com/Becai/dailyapp'
     },
-    sendType: function(type) {
+    sendType: function (type) {
       this.category = type
       console.log(this.category)
     },
-    loadErr: function(data) {
+    loadErr: function (data) {
       this.ok = data
-    }
+    },
   },
 }
 </script>
@@ -201,5 +258,33 @@ export default {
 }
 .close-btn {
   font-size: 18px;
+}
+.fresh_icon {
+  width: 100%;
+  height: 50px;
+  position: fixed;
+  top: -100px;
+  margin: 0 auto;
+  z-index: 1000;
+}
+/* 动画来自于element-ui */
+.fresh_icon .circular {
+  height: 42px;
+  width: 42px;
+  -webkit-animation: loading-rotate 2s linear infinite;
+  animation: loading-rotate 2s linear infinite;
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50%;
+}
+.fresh_icon .circular .path {
+  stroke: aqua;
+  -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #409eff;
+  stroke-linecap: round;
 }
 </style>
