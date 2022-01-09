@@ -11,7 +11,11 @@
         </el-row>
       </AppSlider>
     </transition>
-
+    <div class="fresh_icon" ref="freshIcon">
+      <svg viewBox="25 25 50 50" class="circular">
+        <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+      </svg>
+    </div>
     <el-container>
       <el-container>
         <el-header>
@@ -42,13 +46,50 @@
 </template>
 
 <script>
-import search from '../components/AppSearch.vue'
-import carousel from '../components/AppCarousel.vue'
-import newslayout from '../components/AppNewsLayout.vue'
-import AppSlider from '../components/AppSlider.vue'
+import search from "../components/AppSearch.vue";
+import carousel from "../components/AppCarousel.vue";
+import newslayout from "../components/AppNewsLayout.vue";
+import AppSlider from "../components/AppSlider.vue";
+
+function fresh(icon) {
+  //触发刷新的最小移动距离
+  let minFreshDistance = 80;
+  //屏幕高度
+  let windowHeight = document.documentElement.clientHeight;
+  let startY = 0;
+  let allowFresh = false;
+  //手指的移动距离
+  let distance = 0;
+  document.ontouchstart = (event) => {
+    allowFresh = false;
+    startY = event.touches[0].pageY;
+    if (startY <= windowHeight / 2) {
+      allowFresh = true;
+    }
+  };
+
+  document.ontouchmove = (event) => {
+    if (allowFresh) {
+      let endY = event.touches[0].pageY;
+      distance = endY - startY;
+      if (distance > 0 && distance <= 200) {
+        icon.style.top = distance - minFreshDistance + "px";
+        console.log(icon.style);
+      }
+    }
+  };
+
+  document.ontouchend = () => {
+    if (allowFresh && distance >= minFreshDistance) {
+      location.reload();
+    }else{
+      icon.style.top = "-100px";
+    }
+  };
+}
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     search,
     carousel,
@@ -57,16 +98,19 @@ export default {
   },
   data() {
     return {
-      input: '',
+      input: "",
       show: false,
-    }
+    };
+  },
+  mounted: function () {
+    fresh(this.$refs.freshIcon);
   },
   methods: {
     toggleSlider: function () {
-      this.show = !this.show
+      this.show = !this.show;
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -122,5 +166,33 @@ export default {
   font-size: 18px;
   text-align: center;
   margin-top: 10px;
+}
+.fresh_icon {
+  width: 100%;
+  height: 50px;
+  position: fixed;
+  top: -100px;
+  margin: 0 auto;
+  z-index: 1000;
+}
+/* 动画来自于element-ui */
+.fresh_icon .circular {
+  height: 42px;
+  width: 42px;
+  -webkit-animation: loading-rotate 2s linear infinite;
+  animation: loading-rotate 2s linear infinite;
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50%;
+}
+.fresh_icon .circular .path{
+  stroke: aqua;
+  -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #409eff;
+  stroke-linecap: round;
 }
 </style>

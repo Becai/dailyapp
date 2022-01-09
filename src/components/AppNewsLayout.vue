@@ -15,11 +15,19 @@
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
-          <img v-bind:src="item.image" alt="" v-on:click="jumpPage(item.uniqueKey, item.image)" v-else/>
+          <img
+            v-bind:src="item.image"
+            alt=""
+            v-on:click="jumpPage(item.uniqueKey, item.image)"
+            v-else
+          />
         </div>
       </el-col>
       <el-col :span="10" :push="1">
-        <div class="grid-content" v-on:click="jumpPage(item.uniqueKey, item.image)">
+        <div
+          class="grid-content"
+          v-on:click="jumpPage(item.uniqueKey, item.image)"
+        >
           {{ item.title }}
         </div>
         <div class="newsdate">{{ item.date }}</div>
@@ -47,7 +55,6 @@ function loadData(vm) {
   let start = Date.now();
   let temp = [];
 
-  vm.loading = true;
   vm.request(
     "/index",
     {
@@ -120,11 +127,15 @@ export default {
     jumpPage: function (id, imgUrl) {
       // let pageId;
       console.log(id, imgUrl);
-      this.$router.push({ name: "Content", params: {id: id, imgUrl: imgUrl} });
+      this.$router.push({
+        name: "Content",
+        params: { id: id, imgUrl: imgUrl },
+      });
     },
     loadMore: function () {
       if (this.more && !this.loading && isLoad()) {
         console.log("load");
+        this.loading = true;
         page++;
         loadData(this);
       }
