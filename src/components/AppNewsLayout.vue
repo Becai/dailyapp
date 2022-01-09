@@ -10,16 +10,10 @@
     >
       <el-col :span="10" :pull="1">
         <div class="grid-content">
-          <el-image v-if="state">
-            <div slot="error" class="image-slot">
-              <i class="el-icon-picture-outline"></i>
-            </div>
-          </el-image>
           <img
             v-bind:src="item.image"
             alt=""
             v-on:click="jumpPage(item.uniqueKey, item.image)"
-            v-else
           />
         </div>
       </el-col>
@@ -66,7 +60,6 @@ function loadData(vm) {
     },
     //success
     (response) => {
-      vm.state = false
       console.log(response.data)
       let resultData = response.data.result.data
       // 新闻列表
@@ -138,7 +131,6 @@ export default {
   data: function () {
     return {
       items: [],
-      state: true,
       type: 'top',
       loading: false,
       more: true,
