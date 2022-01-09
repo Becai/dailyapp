@@ -86,6 +86,7 @@ export default {
       this.$message({
         message: '链接已成功复制到剪贴板',
         type: 'success',
+        duration: '1000'
       })
     },
     openErr() {
