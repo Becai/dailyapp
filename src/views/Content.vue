@@ -10,15 +10,16 @@
             >&#xe64e;</i
           >
         </div>
-        <img src="" alt="" />
+        <img v-bind:src="imgUrl" alt="" class="background-img"/>
       </el-header>
       <el-main style="margin-top: -45px; z-index: 1">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>卡片名称</span>
+            <span class="content-title">{{ msg.detail.title }}</span>
           </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{ '列表内容 ' + o }}
+          <div class="text item">
+            <p class="content-date">{{ msg.detail.date }}</p>
+            <p v-html="msg.content"></p>
           </div>
         </el-card>
       </el-main>
@@ -31,38 +32,43 @@ export default {
   name: 'Content',
   data: function () {
     return {
-      pageId: 0,
+      // pageId: 0,
       id: 0,
+      imgUrl: '',
       msg: {},
     }
   },
   created: function () {
-    this.pageId = this.$route.params['pageId']
-    this.id = this.$route.params['id']
+    // this.pageId = this.$route.params['pageId']
   },
   mounted: function () {
+    this.id = this.$route.params['id']
+    this.imgUrl = this.$route.params['imgUrl']
+    console.log(this.id, this.imgUrl)
+
     this.request(
-      '/index',
+      '/content',
       {
-        type: this.type,
-        page: this.page,
-        is_filter: 1,
+        uniquekey: this.id,
       },
       (response) => {
-        console.log(response.data)
-        let obj = response.data.result.data
-        let temp = {}
+        // console.log(response.data)
+        let obj = response.data.result
+        let detail = response.data.result.detail
+        console.log(obj, detail)
         // 新闻详情
-        // 修改
-        temp.push({
-          author: obj.author_name,
-          category: obj.category,
-          date: obj.date,
-          image: obj.thumbnail_pic_s,
-          title: obj.title,
+        this.msg = {
+          detail: {
+            author: detail.author_name,
+            category: detail.category,
+            date: detail.date,
+            image: detail.thumbnail_pic_s,
+            title: detail.title,
+            url: detail.url,
+          },
           id: obj.uniquekey,
-          url: obj.url,
-        })
+          content: obj.content,
+        }
       }
     )
   },
@@ -99,8 +105,26 @@ export default {
     rgb(226, 225, 228, 0.1)
   ); /* 标准的语法（必须放在最后） */
   color: white;
+  position: relative;
+  z-index: 1;
+}
+.background-img {
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  width: 400px;
 }
 i .iconfont {
   margin: 20px 20px;
+}
+.content-date {
+  margin-top: 0;
+  font-size: 14px;
+  color: #847c74;
+  font-family: zcool;
+}
+.content-title {
+  font-family: notoserifb;
+  font-size: 24px;
 }
 </style>
