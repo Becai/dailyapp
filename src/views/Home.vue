@@ -6,8 +6,9 @@
           <i class="el-icon-close" @click="toggleSlider"></i>
         </div>
         <el-row>
-          <div>侧边栏内容1</div>
-          <div>侧边栏内容2</div>
+          <div v-for="item in tableData" :key="item.id" class="slider-cell">
+            {{ item.name }}
+          </div>
         </el-row>
       </AppSlider>
     </transition>
@@ -59,6 +60,20 @@ export default {
     return {
       input: '',
       show: false,
+      tableData: [
+        {
+          name: '娱乐',
+          label: 'yule',
+        },
+        {
+          name: '娱乐',
+          label: 'yule',
+        },
+        {
+          name: '娱乐',
+          label: 'yule',
+        },
+      ],
     }
   },
   methods: {
@@ -122,5 +137,18 @@ export default {
   font-size: 18px;
   text-align: center;
   margin-top: 10px;
+}
+.slider-cell {
+  border-bottom: thin solid #cfccc9;
+  padding: 20px 0;
+  font-size: 18px;
+  letter-spacing: 10px;
+}
+.slider-cell:hover {
+  background-color: #cdd1d3;
+}
+.slider-cell:first-of-type {
+  border-top: thin solid #cfccc9;
+  margin-top: 50px;
 }
 </style>

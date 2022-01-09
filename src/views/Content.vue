@@ -10,15 +10,15 @@
             >&#xe64e;</i
           >
         </div>
-        <img v-bind:src="imgUrl" alt="" class="background-img"/>
+        <img v-bind:src="imgUrl" alt="" class="background-img" />
       </el-header>
       <el-main style="margin-top: -45px; z-index: 1">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span class="content-title">{{ msg.detail.title }}</span>
+            <span class="content-title">{{ detail.title }}</span>
           </div>
           <div class="text item">
-            <p class="content-date">{{ msg.detail.date }}</p>
+            <p class="content-date">{{ detail.date }}</p>
             <p v-html="msg.content"></p>
           </div>
         </el-card>
@@ -36,6 +36,7 @@ export default {
       id: 0,
       imgUrl: '',
       msg: {},
+      detail: {},
     }
   },
   created: function () {
@@ -58,16 +59,16 @@ export default {
         console.log(obj, detail)
         // 新闻详情
         this.msg = {
-          detail: {
-            author: detail.author_name,
-            category: detail.category,
-            date: detail.date,
-            image: detail.thumbnail_pic_s,
-            title: detail.title,
-            url: detail.url,
-          },
           id: obj.uniquekey,
           content: obj.content,
+        }
+        this.detail = {
+          author: detail.author_name,
+          category: detail.category,
+          date: detail.date,
+          image: detail.thumbnail_pic_s,
+          title: detail.title,
+          url: detail.url,
         }
       }
     )

@@ -15,11 +15,19 @@
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
-          <img v-bind:src="item.image" alt="" v-on:click="jumpPage(item.uniqueKey, item.image)" v-else/>
+          <img
+            v-bind:src="item.image"
+            alt=""
+            v-on:click="jumpPage(item.uniqueKey, item.image)"
+            v-else
+          />
         </div>
       </el-col>
       <el-col :span="10" :push="1">
-        <div class="grid-content" v-on:click="jumpPage(item.uniqueKey, item.image)">
+        <div
+          class="grid-content"
+          v-on:click="jumpPage(item.uniqueKey, item.image)"
+        >
           {{ item.title }}
         </div>
         <div class="newsdate">{{ item.date }}</div>
@@ -31,25 +39,27 @@
 </template>
 
 <script>
-import { isLoad } from "../utils/scrollUtils.js";
+import { isLoad } from '../utils/scrollUtils.js'
+import Bus from '../router/Bus.js'
 
 //最小加载时间，单位毫秒
-let minLoadTime = 200;
+let minLoadTime = 200
 //可以加载的最大页数
-let maxPage = 50;
+let maxPage = 50
 //当前页数
-let page = 1;
+let page = 1
 // let cache = [];
 /**
  * 加载数据
  */
 function loadData(vm) {
-  let start = Date.now();
-  let temp = [];
+  let start = Date.now()
+  let temp = []
+  let carouselData = []
 
-  vm.loading = true;
+  vm.loading = true
   vm.request(
-    "/index",
+    '/index',
     {
       type: vm.type,
       page: page,
@@ -57,46 +67,62 @@ function loadData(vm) {
     },
     //success
     (response) => {
-      vm.state = false;
-      console.log(response.data);
-      let resultData = response.data.result.data;
+      vm.state = false
+      console.log(response.data)
+      let resultData = response.data.result.data
       // 新闻列表
-      for (let i = 4; i < resultData.length; i++) {
-        let obj = resultData[i];
-        temp.push({
-          author: obj.author_name,
-          category: obj.category,
-          date: obj.date,
-          image: obj.thumbnail_pic_s,
-          title: obj.title,
-          uniqueKey: obj.uniquekey,
-          url: obj.url,
-        });
+      let i = 0
+      for (; i < resultData.length; i++) {
+        let obj = resultData[i]
+        // 前四条新闻，轮播图展示
+        if (i >= 4) {
+          temp.push({
+            author: obj.author_name,
+            category: obj.category,
+            date: obj.date,
+            image: obj.thumbnail_pic_s,
+            title: obj.title,
+            uniqueKey: obj.uniquekey,
+            url: obj.url,
+          })
+        } else {
+          carouselData.push({
+            author: obj.author_name,
+            category: obj.category,
+            date: obj.date,
+            image: obj.thumbnail_pic_s,
+            title: obj.title,
+            uniqueKey: obj.uniquekey,
+            url: obj.url,
+          })
+        }
       }
+      // console.log(carouselData, temp)
+      Bus.$emit('msgToCarousel', carouselData)
     },
     //catch
     undefined,
     //finally
     () => {
-      let end = Date.now();
+      let end = Date.now()
       //实际加载时间
-      let loadTime = end - start;
+      let loadTime = end - start
       //第一次加载时不等待
-      let waitTime = 0;
+      let waitTime = 0
       if (page != 1) {
         //设置最小等待加载时间，让用户觉得程序有加载的过程
-        waitTime = loadTime < minLoadTime ? minLoadTime : loadTime;
+        waitTime = loadTime < minLoadTime ? minLoadTime : loadTime
       }
 
       setTimeout(() => {
-        vm.items = vm.items.concat(temp);
-        vm.loading = false;
+        vm.items = vm.items.concat(temp)
+        vm.loading = false
         if (page >= maxPage) {
-          vm.more = false;
+          vm.more = false
         }
-      }, waitTime);
+      }, waitTime)
     }
-  );
+  )
 }
 
 export default {
@@ -104,33 +130,33 @@ export default {
     return {
       items: [],
       state: true,
-      type: "top",
+      type: 'top',
       loading: false,
       more: true,
-    };
+    }
   },
   created: function () {
-    loadData(this);
+    loadData(this)
   },
   mounted: function () {
-    window.onscroll = this.loadMore;
+    window.onscroll = this.loadMore
   },
   methods: {
     // 新闻详情跳转
     jumpPage: function (id, imgUrl) {
       // let pageId;
-      console.log(id, imgUrl);
-      this.$router.push({ name: "Content", params: {id: id, imgUrl: imgUrl} });
+      console.log(id, imgUrl)
+      this.$router.push({ name: 'Content', params: { id: id, imgUrl: imgUrl } })
     },
     loadMore: function () {
       if (this.more && !this.loading && isLoad()) {
-        console.log("load");
-        page++;
-        loadData(this);
+        console.log('load')
+        page++
+        loadData(this)
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

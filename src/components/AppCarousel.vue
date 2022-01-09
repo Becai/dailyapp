@@ -9,7 +9,7 @@
 </template>
 
 <script>
-// import func from 'vue-editor-bridge';
+import Bus from '../router/Bus.js'
 
 export default {
   data() {
@@ -20,35 +20,9 @@ export default {
   },
   methods: {},
   mounted: function () {
-    this.request(
-      "/index",
-      {
-        type: this.type,
-        page: this.page,
-        is_filter: 1,
-      },
-      (response) => {
-        this.state = false;
-        console.log(response.data);
-        let resultData = response.data.result.data;
-        let swipeTemp = [];
-        // 轮播图
-        for (let i = 0; i < 4; i++) {
-          let obj = resultData[i];
-          swipeTemp.push({
-            author: obj.author_name,
-            category: obj.category,
-            date: obj.date,
-            image: obj.thumbnail_pic_s,
-            title: obj.title,
-            id: obj.uniquekey,
-            url: obj.url,
-          });
-        }
-        console.log(swipeTemp);
-        this.swipeItems = swipeTemp;
-      }
-    );
+    Bus.$on('msgToCarousel', (data) => {
+      this.swipeItems = data
+    })
   },
 };
 </script>

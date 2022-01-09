@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  name: "AppSlider"
-};
+  name: 'AppSlider',
+}
 </script>
 
 <style scoped>
@@ -15,7 +15,6 @@ export default {
   padding: 0;
   margin: 0;
 }
-
 
 .app-slider {
   text-align: center;
@@ -25,5 +24,4 @@ export default {
   top: 0px;
   z-index: 100;
 }
-
 </style>
