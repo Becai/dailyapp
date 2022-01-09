@@ -72,8 +72,9 @@ function fresh(icon) {
     if (allowFresh) {
       let endY = event.touches[0].pageY;
       distance = endY - startY;
-      if (distance > 0 && distance <= 200) {
-        icon.style.top = distance - minFreshDistance + "px";
+      if (distance > 0 && distance <= 300) {
+        let position = distance * 0.6 - 60;
+        icon.style.top = position + "px";
         console.log(icon.style);
       }
     }
@@ -185,7 +186,7 @@ export default {
   border: 1px solid #fff;
   border-radius: 50%;
 }
-.fresh_icon .circular .path{
+.fresh_icon .circular .path {
   stroke: aqua;
   -webkit-animation: loading-dash 1.5s ease-in-out infinite;
   animation: loading-dash 1.5s ease-in-out infinite;
