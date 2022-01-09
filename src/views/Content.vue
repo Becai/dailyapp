@@ -49,6 +49,8 @@ export default {
     this.id = this.$route.params['id']
     this.imgUrl = this.$route.params['imgUrl']
     console.log(this.id, this.imgUrl)
+    //滚动条指定
+    document.documentElement.scrollTop = 0
 
     this.request(
       '/content',

@@ -147,18 +147,18 @@ export default {
     // 新闻详情跳转
     jumpPage: function (id, imgUrl) {
       // let pageId;
-      console.log(id, imgUrl);
+      console.log(id, imgUrl)
       this.$router.push({
-        name: "Content",
+        name: 'Content',
         params: { id: id, imgUrl: imgUrl },
-      });
+      })
     },
     loadMore: function () {
       if (this.more && !this.loading && isLoad()) {
-        console.log("load");
-        this.loading = true;
-        page++;
-        loadData(this);
+        console.log('load')
+        this.loading = true
+        page++
+        loadData(this)
       }
     },
   },

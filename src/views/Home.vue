@@ -46,12 +46,14 @@
           </el-row>
         </el-header>
         <el-main v-if="ok">
-          <el-container>
+          <el-container class="container">
             <el-header height="200px" style="margin-bottom: 20px">
               <carousel />
             </el-header>
             <el-main>
-              <newslayout v-bind:category="category" @state="loadErr" />
+              <newslayout v-bind:category="category" @state="loadErr" id="container" />
+              <!--回到顶部-->
+              <el-button type="primary" icon="el-icon-caret-top" class="back-top" @click="backTop" circle></el-button>
             </el-main>
           </el-container>
         </el-main>
@@ -182,6 +184,19 @@ export default {
     loadErr: function (data) {
       this.ok = data
     },
+    backTop: function() {
+      let toTop = document.documentElement.scrollTop
+      let id = setInterval(() => {
+        toTop -= 0.3 * toTop
+        document.documentElement.scrollTop = toTop
+        if (document.documentElement.scrollTop == 0) {
+          clearInterval(id)
+        }
+      }, 20)
+      /* setTimeout(() => {
+        clearInterval(id)
+      }, 500) */
+    }
   },
 }
 </script>
@@ -286,5 +301,10 @@ export default {
   stroke-width: 2;
   stroke: #409eff;
   stroke-linecap: round;
+}
+.back-top {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
 }
 </style>
