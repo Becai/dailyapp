@@ -8,6 +8,7 @@ let key = Key.key;
 let allowFake = true;
 function request(url, params, success, error, final) {
     params.key = key;
+    // console.log(params)
     let config = {
         url: url,
         baseURL: "/api/",
@@ -22,7 +23,6 @@ function request(url, params, success, error, final) {
             } else {
                 if (allowFake && response.data.error_code == 10012) {
                     if (url == "/index") {
-
                         response.data = FakeData.indexData(30);
                     } else {
                         response.data = FakeData.contentData(params.uniqueKey);
