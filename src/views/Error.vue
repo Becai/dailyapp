@@ -5,9 +5,9 @@
       :image-size="350"
       image="/404.svg"
     >
-      <el-button class="back-home" type="primary">回到主页</el-button>
+      <el-button class="back-home" @click="backHome" type="primary">回到主页</el-button>
       <el-row>
-          不如上B站看<a href="https://space.bilibili.com/672328094/">@嘉然今天吃什么</a>吧！
+          不如来看<a href="https://space.bilibili.com/672328094/">@嘉然今天吃什么</a>吧！
       </el-row>
     </el-empty>
   </div>
