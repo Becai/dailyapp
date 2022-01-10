@@ -75,6 +75,11 @@ function loadData(vm) {
     //success
     (response) => {
       console.log(response.data);
+      if (response.data.error_code != 0) {
+        let state = false;
+        vm.$emit("state", state);
+        return;
+      }
       let resultData = response.data.result.data;
       // 新闻列表
       for (let i = 0; i < resultData.length; i++) {
@@ -106,7 +111,7 @@ function loadData(vm) {
     //catch
     () => {
       let state = false;
-      vm.bus.$emit("state", state);
+      vm.$emit("state", state);
     },
     //finally
     () => {
