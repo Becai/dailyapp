@@ -1,6 +1,7 @@
 <template>
   <div id="newslayout">
     <div v-if="!searchFailed">
+      <div id="top"></div>
       <el-row
         type="flex"
         class="row-bg"
@@ -45,7 +46,7 @@
 </template>
 
 <script>
-import { isLoad } from "../utils/scrollUtils.js";
+import { isLoad, scrollTop, setScrollTop } from "../utils/scrollUtils.js";
 
 //最小加载时间，单位毫秒
 let minLoadTime = 200;
@@ -87,6 +88,8 @@ function loadData(vm) {
           uniqueKey: obj.uniquekey,
           url: obj.url,
         };
+        let { ...backData } = data;
+        backup.push(backData);
         // 前四条新闻，轮播图展示,只有第一次才发送
         if (page == 1 && i < 4) {
           carouselData.push(data);
@@ -116,7 +119,6 @@ function loadData(vm) {
         //设置最小等待加载时间，让用户觉得程序有加载的过程
         waitTime = loadTime < minLoadTime ? minLoadTime : loadTime;
       }
-      backup = backup.concat(temp);
       setTimeout(() => {
         vm.items = vm.items.concat(temp);
         vm.loading = false;
@@ -174,7 +176,7 @@ export default {
       });
     },
     loadMore: function () {
-      if (document.documentElement.scrollTop > 700) {
+      if (scrollTop() > 700) {
         this.backToTop = true;
       } else {
         this.backToTop = false;
@@ -192,24 +194,26 @@ export default {
       for (let i = 0; i < temp.length; i++) {
         let index = temp[i].title.search(content);
         if (index != -1) {
-          result.push(temp[i]);
-          temp[i].title = temp[i].title.replaceAll(
+          let { ...backupData } = temp[i];
+          backupData.title = temp[i].title.replaceAll(
             content,
             '<font color="#f00">' + content + "</font>"
           );
+          result.push(backupData);
         }
       }
       this.items = result;
-      if(result.length == 0){
+      this.searchFailed = false;
+      if (result.length == 0) {
         this.searchFailed = true;
       }
     },
     backTop: function () {
-      let toTop = document.documentElement.scrollTop;
+      let toTop = scrollTop();
       let id = setInterval(() => {
         toTop -= 0.3 * toTop;
-        document.documentElement.scrollTop = toTop;
-        if (document.documentElement.scrollTop == 0) {
+        setScrollTop(toTop);
+        if (scrollTop() == 0) {
           clearInterval(id);
         }
       }, 20);

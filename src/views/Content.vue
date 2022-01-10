@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import {setScrollTop} from "../utils/scrollUtils.js";
 export default {
   name: 'Content',
   data: function () {
@@ -51,7 +52,7 @@ export default {
     this.imgUrl = this.$route.params['imgUrl']
     console.log(this.id, this.imgUrl)
     //滚动条指定
-    document.documentElement.scrollTop = 0
+    setScrollTop(0);
 
     this.request(
       '/content',
