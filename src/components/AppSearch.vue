@@ -34,7 +34,8 @@ export default {
         });
         return;
       }
-      this.$router.push({ name: "Search", params: { content: this.input } });
+      //通过总线将搜索内容发送到AppNewsLayout中
+      this.$bus.$emit('search', this.input);
     },
   },
 };

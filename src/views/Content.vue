@@ -44,6 +44,7 @@ export default {
   },
   created: function () {
     // this.pageId = this.$route.params['pageId']
+    window.onscroll = null;
   },
   mounted: function () {
     this.id = this.$route.params['id']

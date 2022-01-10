@@ -17,6 +17,7 @@ export default {
 }
 
 .app-slider {
+  overflow: auto;
   text-align: center;
   height: 100%;
   position: fixed;

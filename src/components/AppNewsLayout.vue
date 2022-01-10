@@ -1,58 +1,71 @@
 <template>
   <div id="newslayout">
-    <el-row
-      type="flex"
-      class="row-bg"
-      justify="center"
-      align="middle"
-      v-for="item in items"
-      :key="item.uniqueKey"
-    >
-      <el-col :span="10" :pull="1">
-        <div class="grid-content">
-          <img
-            v-bind:src="item.image"
-            alt=""
+    <div v-if="!searchFailed">
+      <el-row
+        type="flex"
+        class="row-bg"
+        justify="center"
+        align="middle"
+        v-for="item in items"
+        :key="item.uniqueKey"
+      >
+        <el-col :span="10" :pull="1">
+          <div class="grid-content">
+            <img
+              v-bind:src="item.image"
+              alt=""
+              v-on:click="jumpPage(item.uniqueKey, item.image)"
+            />
+          </div>
+        </el-col>
+        <el-col :span="10" :push="1">
+          <div
+            class="grid-content"
             v-on:click="jumpPage(item.uniqueKey, item.image)"
-          />
-        </div>
-      </el-col>
-      <el-col :span="10" :push="1">
-        <div
-          class="grid-content"
-          v-on:click="jumpPage(item.uniqueKey, item.image)"
-        >
-          {{ item.title }}
-        </div>
-        <div class="newsdate">{{ item.date }}</div>
-      </el-col>
-    </el-row>
-    <div v-if="more" class="loading" v-loading="loading"></div>
-    <div v-else class="end_toast">已经到底了！</div>
+          >
+            <span v-html="item.title"></span>
+          </div>
+          <div class="newsdate">{{ item.date }}</div>
+        </el-col>
+      </el-row>
+      <div v-if="more" class="loading" v-loading="loading"></div>
+      <div v-else class="end_toast">已经到底了！</div>
+    </div>
+    <el-empty v-else description="未找到相关内容"></el-empty>
+    <!--回到顶部-->
+    <el-button
+      type="primary"
+      icon="el-icon-caret-top"
+      v-show="backToTop"
+      class="back-top"
+      @click="backTop"
+      circle
+    ></el-button>
   </div>
 </template>
 
 <script>
-import { isLoad } from '../utils/scrollUtils.js'
-import Bus from '../router/Bus.js'
+import { isLoad } from "../utils/scrollUtils.js";
 
 //最小加载时间，单位毫秒
-let minLoadTime = 200
+let minLoadTime = 200;
 //可以加载的最大页数
-let maxPage = 50
+let maxPage = 50;
 //当前页数
-let page = 1
+let page = 1;
+//数据备份
+let backup = [];
 // let cache = [];
 /**
  * 加载数据
  */
 function loadData(vm) {
-  let start = Date.now()
-  let temp = []
-  let carouselData = []
+  let start = Date.now();
+  let temp = [];
+  let carouselData = [];
 
   vm.request(
-    '/index',
+    "/index",
     {
       type: vm.type,
       page: page,
@@ -60,64 +73,59 @@ function loadData(vm) {
     },
     //success
     (response) => {
-      console.log(response.data)
-      let resultData = response.data.result.data
+      console.log(response.data);
+      let resultData = response.data.result.data;
       // 新闻列表
-      let i = 0
-      for (; i < resultData.length; i++) {
-        let obj = resultData[i]
-        // 前四条新闻，轮播图展示
-        if (i >= 4) {
-          temp.push({
-            author: obj.author_name,
-            category: obj.category,
-            date: obj.date,
-            image: obj.thumbnail_pic_s,
-            title: obj.title,
-            uniqueKey: obj.uniquekey,
-            url: obj.url,
-          })
+      for (let i = 0; i < resultData.length; i++) {
+        let obj = resultData[i];
+        let data = {
+          author: obj.author_name,
+          category: obj.category,
+          date: obj.date,
+          image: obj.thumbnail_pic_s,
+          title: obj.title,
+          uniqueKey: obj.uniquekey,
+          url: obj.url,
+        };
+        // 前四条新闻，轮播图展示,只有第一次才发送
+        if (page == 1 && i < 4) {
+          carouselData.push(data);
         } else {
-          carouselData.push({
-            author: obj.author_name,
-            category: obj.category,
-            date: obj.date,
-            image: obj.thumbnail_pic_s,
-            title: obj.title,
-            uniqueKey: obj.uniquekey,
-            url: obj.url,
-          })
+          temp.push(data);
         }
       }
       // console.log(carouselData, temp)
-      Bus.$emit('msgToCarousel', carouselData)
+      if (page == 1) {
+        //通过总线发送
+        vm.$bus.$emit("msg-carousel", carouselData);
+      }
     },
     //catch
     () => {
-      let state = false
-      vm.$emit('state', state)
+      let state = false;
+      vm.bus.$emit("state", state);
     },
     //finally
     () => {
-      let end = Date.now()
+      let end = Date.now();
       //实际加载时间
-      let loadTime = end - start
+      let loadTime = end - start;
       //第一次加载时不等待
-      let waitTime = 0
+      let waitTime = 0;
       if (page != 1) {
         //设置最小等待加载时间，让用户觉得程序有加载的过程
-        waitTime = loadTime < minLoadTime ? minLoadTime : loadTime
+        waitTime = loadTime < minLoadTime ? minLoadTime : loadTime;
       }
-
+      backup = backup.concat(temp);
       setTimeout(() => {
-        vm.items = vm.items.concat(temp)
-        vm.loading = false
+        vm.items = vm.items.concat(temp);
+        vm.loading = false;
         if (page >= maxPage) {
-          vm.more = false
+          vm.more = false;
         }
-      }, waitTime)
+      }, waitTime);
     }
-  )
+  );
 }
 
 export default {
@@ -125,41 +133,89 @@ export default {
   props: {
     category: {
       type: String,
-      default: 'top',
+      default: "top",
     },
   },
   data: function () {
     return {
       items: [],
-      type: 'top',
+      type: "top",
       loading: false,
       more: true,
-    }
+      isSearch: false,
+      backToTop: false,
+      searchFailed: false,
+    };
   },
   created: function () {
-    loadData(this)
+    page = 1;
+    loadData(this);
   },
   mounted: function () {
-    // console.log(this.category)
-    window.onscroll = this.loadMore
+    window.onscroll = this.loadMore;
+    this.$bus.$on("search", (content) => {
+      console.log("get " + content);
+      this.isSearch = true;
+      this.searchContent(content);
+    });
+  },
+  beforeDestroy: function () {
+    //移除监听事件
+    this.$bus.$off("search", {});
   },
   methods: {
     // 新闻详情跳转
     jumpPage: function (id, imgUrl) {
       // let pageId;
-      console.log(id, imgUrl)
+      console.log(id, imgUrl);
       this.$router.push({
-        name: 'Content',
+        name: "Content",
         params: { id: id, imgUrl: imgUrl },
-      })
+      });
     },
     loadMore: function () {
-      if (this.more && !this.loading && isLoad()) {
-        console.log('load')
-        this.loading = true
-        page++
-        loadData(this)
+      if (document.documentElement.scrollTop > 700) {
+        this.backToTop = true;
+      } else {
+        this.backToTop = false;
       }
+      if (!this.isSearch && this.more && !this.loading && isLoad()) {
+        console.log("load");
+        this.loading = true;
+        page++;
+        loadData(this);
+      }
+    },
+    searchContent: function (content) {
+      let temp = backup;
+      let result = [];
+      for (let i = 0; i < temp.length; i++) {
+        let index = temp[i].title.search(content);
+        if (index != -1) {
+          result.push(temp[i]);
+          temp[i].title = temp[i].title.replaceAll(
+            content,
+            '<font color="#f00">' + content + "</font>"
+          );
+        }
+      }
+      this.items = result;
+      if(result.length == 0){
+        this.searchFailed = true;
+      }
+    },
+    backTop: function () {
+      let toTop = document.documentElement.scrollTop;
+      let id = setInterval(() => {
+        toTop -= 0.3 * toTop;
+        document.documentElement.scrollTop = toTop;
+        if (document.documentElement.scrollTop == 0) {
+          clearInterval(id);
+        }
+      }, 20);
+      /* setTimeout(() => {
+        clearInterval(id)
+      }, 500) */
     },
   },
   watch: {
@@ -167,15 +223,15 @@ export default {
     category: {
       handler(type) {
         // 初始化页面
-        this.items = []
-        this.page = 1
+        this.items = [];
+        this.page = 1;
 
-        this.type = type
-        loadData(this)
+        this.type = type;
+        loadData(this);
       },
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -216,5 +272,11 @@ img {
   margin-top: -1em;
   color: gray;
   font-size: 14px;
+}
+.back-top {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2000;
 }
 </style>

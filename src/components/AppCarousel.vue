@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import Bus from '../router/Bus.js'
 
 export default {
   data() {
@@ -19,10 +18,13 @@ export default {
   },
   methods: {},
   mounted: function () {
-    Bus.$on('msgToCarousel', (data) => {
+    this.$bus.$on('msg-carousel', (data) => {
       this.swipeItems = data
     })
   },
+  beforeDestroy: function(){
+    this.$bus.$off('msg-carousel', {});
+  }
 };
 </script>
 

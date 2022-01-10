@@ -47,13 +47,14 @@
         </el-header>
         <el-main v-if="ok">
           <el-container class="container">
-            <el-header height="200px" style="margin-bottom: 20px">
+            <el-header height="200px" style="margin-bottom: 20px" v-if="!isSearch">
               <carousel />
             </el-header>
             <el-main>
               <newslayout v-bind:category="category" @state="loadErr" id="container" />
-              <!--回到顶部-->
-              <el-button type="primary" icon="el-icon-caret-top" class="back-top" @click="backTop" circle></el-button>
+              <!-- 搜索时显示回到主页 -->
+              <el-button type="primary" icon="el-icon-s-home" class="back-home" circle v-if="isSearch" @click="backToHome"></el-button>
+              
             </el-main>
           </el-container>
         </el-main>
@@ -93,7 +94,6 @@ function fresh(icon) {
       if (distance > 0 && distance <= 300) {
         let position = distance * 0.6 - 60
         icon.style.top = position + 'px'
-        console.log(icon.style)
       }
     }
   }
@@ -120,6 +120,7 @@ export default {
       input: '',
       show: false,
 
+      isSearch: false,
       category: 'top',
       ok: true,
       tableData: [
@@ -167,7 +168,18 @@ export default {
     }
   },
   mounted: function () {
-    fresh(this.$refs.freshIcon)
+    fresh(this.$refs.freshIcon);
+
+    //监听搜索事件
+    this.$bus.$on('search', (content) =>  {
+      if(content != ''){
+        this.isSearch = true;
+        console.log(this.isSearch);
+      }
+    })
+  },
+  beforeDestroy: function(){
+    this.$bus.$off('search', {});
   },
   methods: {
     toggleSlider: function () {
@@ -184,18 +196,10 @@ export default {
     loadErr: function (data) {
       this.ok = data
     },
-    backTop: function() {
-      let toTop = document.documentElement.scrollTop
-      let id = setInterval(() => {
-        toTop -= 0.3 * toTop
-        document.documentElement.scrollTop = toTop
-        if (document.documentElement.scrollTop == 0) {
-          clearInterval(id)
-        }
-      }, 20)
-      /* setTimeout(() => {
-        clearInterval(id)
-      }, 500) */
+    
+    backToHome: function(){
+      //回到主页
+      location.reload();
     }
   },
 }
@@ -247,7 +251,7 @@ export default {
   text-align: end;
 }
 .el-icon-close {
-  margin-top: 0.3em;
+  margin-top: 1em;
   margin-right: 0.5em;
 }
 .slider-toggle-button {
@@ -258,7 +262,7 @@ export default {
 .slider-cell {
   border-bottom: thin solid #cfccc9;
   padding: 20px 0;
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 10px;
 }
 .slider-cell:hover {
@@ -266,10 +270,11 @@ export default {
 }
 .slider-cell:first-of-type {
   border-top: thin solid #cfccc9;
-  margin-top: 50px;
+  margin-top: 20px;
 }
 .feedback-btn {
-  margin-top: 100px;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 .close-btn {
   font-size: 18px;
@@ -302,9 +307,10 @@ export default {
   stroke: #409eff;
   stroke-linecap: round;
 }
-.back-top {
+
+.back-home{
   position: fixed;
   right: 10px;
-  bottom: 10px;
+  bottom: 60px;
 }
 </style>

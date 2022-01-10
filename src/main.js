@@ -13,6 +13,9 @@ Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 
+// 全局事件总线
+Vue.prototype.$bus = new Vue();
+
 // 将request方法挂载到Vue上
 Vue.prototype.request = AxiosUtils.request;
 
